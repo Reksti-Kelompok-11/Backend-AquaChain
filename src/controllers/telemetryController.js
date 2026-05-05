@@ -71,3 +71,37 @@ exports.getTelemetry = async (req, res, next) => {
     next(err);
   }
 };
+
+// POST /api/telemetry/webhook
+// Dipanggil otomatis oleh Supabase setiap ada INSERT di tabel telemetry
+exports.processWebhook = async (req, res, next) => {
+  try {
+    // Supabase membungkus data baru di dalam properti "record"
+    const newData = req.body.record;
+    
+    if (!newData) {
+      return res.status(400).json({ error: 'Format Webhook tidak valid' });
+    }
+
+    const { telemetry_id, pond_id, ph, temperature, turbidity } = newData;
+
+    // 1. Hitung FHI & Peringatan
+    // (Bisa dikembangkan nanti untuk memicu notifikasi Push ke Mobile App)
+    const fhi = calculateFHI({ ph, temperature, turbidity });
+    const alerts = getAlerts({ ph, temperature, turbidity });
+
+    console.log(`[WEBHOOK] Data baru dari ${pond_id}. FHI: ${fhi} | Alerts: ${alerts.length}`);
+
+    // 2. Anchor ke Blockchain Polygon Mumbai (Asinkron)
+    // Hapus tanda komentar (//) di bawah ini jika smart contract sudah di-deploy
+    /*
+    anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity })
+      .then(receipt => console.log(`[Blockchain] Success Tx: ${receipt.hash}`))
+      .catch(err => console.error('[Blockchain] Anchor failed:', err.message));
+    */
+
+    res.status(200).json({ message: 'Webhook berhasil diproses' });
+  } catch (err) {
+    next(err);
+  }
+};

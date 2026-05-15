@@ -84,12 +84,57 @@ exports.getTelemetryLastFive = async (req, res, next) => {
     const { data, error } = await supabase
       .from('telemetry')
       .select('*')
+      .eq('pond_id', pondId)
       .order('timestamp', { ascending: false })
       .limit(5);
 
     if (error) throw error;
     res.json(data);
 
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/telemetry/fhi/:pondId
+ * Ambil current FHI di pond.
+ */
+exports.getFHIPond = async (req, res, next) => {
+  try {
+    const { pondId } = req.params;
+    const { data, error } = await supabase
+      .from('telemetry')
+      .select('ph, temperature, turbidity')
+      .eq('pond_id', pondId)
+      .order('timestamp', { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+    const fhi = calculateFHI(data[0]);
+    res.json({ fhi });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/telemetry/alerts/:pondId
+ * Ambil current alerts di pond.
+ */
+exports.getAlertsPond= async (req, res, next) => {
+  try {
+    const { pondId } = req.params;
+    const { data, error } = await supabase
+      .from('telemetry')
+      .select('ph, temperature, turbidity')
+      .eq('pond_id', pondId)
+      .order('timestamp', { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+    const alerts = getAlerts(data[0]);
+    res.json({ alerts });
   } catch (err) {
     next(err);
   }

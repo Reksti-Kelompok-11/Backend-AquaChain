@@ -67,6 +67,8 @@ exports.createSchedule = async (req, res, next) => {
   }
 };
 
+
+
 /**
  * PATCH /api/feeder/schedules/:scheduleId/deactivate
  * Nonaktifkan jadwal pakan.
@@ -76,6 +78,48 @@ exports.deactivateSchedule = async (req, res, next) => {
     const { data, error } = await supabase
       .from('feeding_schedules')
       .update({ is_active: false })
+      .eq('schedule_id', req.params.scheduleId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * DELETE /api/feeder/schedules/:scheduleId
+ * Hapus jadwal pakan.
+ */
+exports.deleteSchedule = async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('feeding_schedules')
+      .delete()
+      .eq('schedule_id', req.params.scheduleId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * PATCH /api/feeder/schedules/:scheduleId/activate
+ * Aktifkan jadwal pakan.
+ */
+exports.activateSchedule = async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('feeding_schedules')
+      .update({ is_active: true })
       .eq('schedule_id', req.params.scheduleId)
       .select()
       .single();

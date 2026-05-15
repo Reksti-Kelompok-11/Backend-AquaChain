@@ -139,3 +139,39 @@ exports.getAlertsPond= async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * GET /api/telemetry/fhi
+ * Ambil 10 FHI terakhir di pond.
+ */
+exports.getFHIHistory = async (req, res, next) => {
+  try {
+    const { pondId } = req.params;
+    
+    const { data, error } = await supabase
+      .from('telemetry')
+      .select('ph, temperature, turbidity, timestamp')
+      .eq('pond_id', pondId)
+      .order('timestamp', { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+
+    const fhiData = data.map(d => {
+      const score = calculateFHI({ ph: d.ph, temperature: d.temperature, turbidity: d.turbidity });
+      let status = 'good';
+      if (score < 50) status = 'danger';
+      else if (score < 80) status = 'warning';
+
+      return {
+        date: d.timestamp,
+        fhi: score,
+        status
+      };
+    });
+
+    res.json(fhiData);
+  } catch (err) {
+    next(err);
+  }
+};

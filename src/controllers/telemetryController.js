@@ -31,10 +31,8 @@ exports.receiveTelemetry = async (req, res, next) => {
     });
     if (error) throw error;
 
-    // 2. Anchor ke blockchain (async — tidak blok response ke ESP32)
-    //    Jika gagal, error dicatat di log tapi tidak gagalkan request
-    // anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity })
-    //   .catch(err => console.error('[Blockchain] Anchor failed:', err.message));
+    anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity })
+    .catch(err => console.error('[Blockchain] Anchor failed:', err.message, err.stack));
 
     res.status(201).json({
       telemetry_id,

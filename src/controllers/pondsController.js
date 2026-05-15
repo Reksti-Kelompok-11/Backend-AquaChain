@@ -43,39 +43,6 @@ exports.getPondById = async (req, res, next) => {
 };
 
 /**
- * POST /api/ponds
- * Daftarkan kolam baru.
- */
-exports.createPond = async (req, res, next) => {
-  try {
-    const { name, fish_type, capacity } = req.body;
-
-    if (!name || !fish_type || !capacity) {
-      return res.status(400).json({ error: 'Missing required fields: name, fish_type, capacity' });
-    }
-
-    const { data, error } = await supabase
-      .from('ponds')
-      .insert({
-        pond_id:    uuidv4(),
-        name,
-        fish_type,
-        capacity,
-        status:     'active',
-        created_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    res.status(201).json(data);
-
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
  * PATCH /api/ponds/:pondId/status
  * Update status kolam (active / inactive / maintenance).
  */

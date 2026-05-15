@@ -7,29 +7,30 @@
 function calculateFHI({ ph, temperature, turbidity }) {
   let score = 100;
 
-  // pH ideal: 6.5 - 9.0
-  if (ph < 6.0 || ph > 9.5)         score -= 40;
-  else if (ph < 6.5 || ph > 9.0)    score -= 20;
+  // pH ideal: 6.5 - 8.0
+  if (ph < 6.5 || ph > 8.5)         score -= 60;
+  else if (ph < 7 || ph > 8)    score -= 20;
 
   // Suhu ideal: 25 - 30°C
-  if (temperature < 20 || temperature > 35)       score -= 30;
-  else if (temperature < 25 || temperature > 30)  score -= 10;
+  if (temperature < 20 || temperature > 33)       score -= 60;
+  else if (temperature < 25 || temperature > 30)  score -= 20;
 
-  // Turbidity ideal: < 50 NTU
-  if (turbidity > 100)      score -= 30;
-  else if (turbidity > 50)  score -= 15;
+  // Turbidity ideal: < 5 NTU
+  if (turbidity > 100)      score -= 60;
+  else if (turbidity > 10)  score -= 20;
 
   return Math.max(0, score);
 }
 
 function getAlerts({ ph, temperature, turbidity }) {
   const alerts = [];
+  const fhi = calculateFHI({ ph, temperature, turbidity });
 
-  if (ph < 6.5)          alerts.push({ type: 'ph_low',    message: 'pH terlalu rendah' });
-  if (ph > 9.0)          alerts.push({ type: 'ph_high',   message: 'pH terlalu tinggi' });
-  if (temperature > 32)  alerts.push({ type: 'temp_high', message: 'Suhu terlalu panas' });
-  if (temperature < 22)  alerts.push({ type: 'temp_low',  message: 'Suhu terlalu dingin' });
-  if (turbidity > 80)    alerts.push({ type: 'turbid',    message: 'Air terlalu keruh' });
+  if (fhi < 50) {
+    alerts.push({ type: 'fhi_low', message: 'Bahaya! Kesehatan kolam sangat buruk' });
+  } else if (fhi < 80) {
+    alerts.push({ type: 'fhi_medium', message: 'Waspada! Kesehatan kolam cukup buruk' });
+  }
 
   return alerts;
 }

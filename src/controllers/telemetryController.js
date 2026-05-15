@@ -31,11 +31,11 @@ exports.receiveTelemetry = async (req, res, next) => {
     });
     if (error) throw error;
 
-    try {
-      await anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity });
-    } catch (blockchainErr) {
-      console.error('[Blockchain] Anchor failed:', blockchainErr.message);
-    }
+    // try {
+    //   await anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity });
+    // } catch (blockchainErr) {
+    //   console.error('[Blockchain] Anchor failed:', blockchainErr.message);
+    // }
 
     res.status(201).json({
       telemetry_id,

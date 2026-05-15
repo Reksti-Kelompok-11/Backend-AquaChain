@@ -11,7 +11,7 @@ exports.getBlockchainLogs = async (req, res, next) => {
     const { data, error } = await supabase
       .from('blockchain_logs')
       .select('*')
-      .eq('log_id', req.params.pondId)  // log_id = telemetry_id yang di-anchor
+      .eq('pond_id', req.params.pondId)  // log_id = telemetry_id yang di-anchor
       .order('timestamp', { ascending: false })
       .limit(limit);
 

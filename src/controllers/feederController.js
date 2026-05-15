@@ -22,25 +22,6 @@ exports.getSchedules = async (req, res, next) => {
 };
 
 /**
- * GET /api/feeder/schedules
- * Ambil semua jadwal pakan.
- */
-exports.getAllSchedules = async (req, res, next) => {
-  try {
-    const { data, error } = await supabase
-      .from('feeding_schedules')
-      .select('*')
-      .order('time', { ascending: true });
-
-    if (error) throw error;
-    res.json(data);
-
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
  * POST /api/feeder/schedules
  * Buat jadwal pakan baru.
  */

@@ -27,27 +27,27 @@ exports.getBlockchainLogs = async (req, res, next) => {
  * GET /api/blockchain/verify/:txHash
  * Verifikasi bahwa tx hash ada dan statusnya verified.
  */
-exports.verifyTransaction = async (req, res, next) => {
-  try {
-    const { data, error } = await supabase
-      .from('blockchain_logs')
-      .select('*')
-      .eq('tx_hash', req.params.txHash)
-      .single();
+// exports.verifyTransaction = async (req, res, next) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from('blockchain_logs')
+//       .select('*')
+//       .eq('tx_hash', req.params.txHash)
+//       .single();
 
-    if (error || !data) {
-      return res.status(404).json({ verified: false, message: 'Transaction not found' });
-    }
+//     if (error || !data) {
+//       return res.status(404).json({ verified: false, message: 'Transaction not found' });
+//     }
 
-    res.json({
-      verified:            data.verification_status === 'verified',
-      tx_hash:             data.tx_hash,
-      block_number:        data.block_number,
-      timestamp:           data.timestamp,
-      verification_status: data.verification_status,
-    });
+//     res.json({
+//       verified:            data.verification_status === 'verified',
+//       tx_hash:             data.tx_hash,
+//       block_number:        data.block_number,
+//       timestamp:           data.timestamp,
+//       verification_status: data.verification_status,
+//     });
 
-  } catch (err) {
-    next(err);
-  }
-};
+//   } catch (err) {
+//     next(err);
+//   }
+// };

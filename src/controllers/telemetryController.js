@@ -74,29 +74,6 @@ exports.getTelemetry = async (req, res, next) => {
 };
 
 /**
- * GET /api/telemetry/
- * Ambil 5 riwayat data sensor kolam, terbaru duluan.
- */
-exports.getTelemetryLastFive = async (req, res, next) => {
-  try {
-    const { pondId } = req.params;
-
-    const { data, error } = await supabase
-      .from('telemetry')
-      .select('*')
-      .eq('pond_id', pondId)
-      .order('timestamp', { ascending: false })
-      .limit(5);
-
-    if (error) throw error;
-    res.json(data);
-
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
  * GET /api/telemetry/fhi/:pondId
  * Ambil current FHI di pond.
  */
@@ -141,7 +118,7 @@ exports.getAlertsPond= async (req, res, next) => {
 };
 
 /**
- * GET /api/telemetry/fhi
+ * GET /api/telemetry/fhiHistory/pondId
  * Ambil 10 FHI terakhir di pond.
  */
 exports.getFHIHistory = async (req, res, next) => {
@@ -177,7 +154,7 @@ exports.getFHIHistory = async (req, res, next) => {
 };
 
 /**
- * GET /api/telemetry/alerts
+ * GET /api/telemetry/alertsHistory/pondId
  * Ambil 7 alert terakhir di pond.
  */
 exports.getAlertsHistory = async (req, res, next) => {
@@ -194,7 +171,7 @@ exports.getAlertsHistory = async (req, res, next) => {
     if (error) throw error;
 
     const alerts = data.flatMap((d, index) =>
-      calculateAlerts({ ph: d.ph, temperature: d.temperature, turbidity: d.turbidity })
+      getAlerts({ ph: d.ph, temperature: d.temperature, turbidity: d.turbidity })
         .map(a => ({
           tanggal: d.timestamp,
           parameter: a.message,

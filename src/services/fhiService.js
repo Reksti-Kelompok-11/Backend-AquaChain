@@ -1,9 +1,3 @@
-/**
- * Fish Health Index (FHI)
- * Menghitung skor kesehatan kolam 0-100 berdasarkan data sensor.
- * Makin tinggi = makin sehat.
- */
-
 function calculateFHI({ ph, temperature, turbidity }) {
   let score = 100;
 

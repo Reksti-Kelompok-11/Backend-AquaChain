@@ -6,6 +6,7 @@ const {
   deactivateSchedule,
   createFeedingLog,
   getFeedingLogs,
+  getAllSchedules
 } = require('../controllers/feederController');
 
 router.get('/:pondId/schedules',               getSchedules);

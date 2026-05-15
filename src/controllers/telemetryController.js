@@ -31,8 +31,11 @@ exports.receiveTelemetry = async (req, res, next) => {
     });
     if (error) throw error;
 
-    anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity })
-    .catch(err => console.error('[Blockchain] Anchor failed:', err.message, err.stack));
+    try {
+      await anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity });
+    } catch (blockchainErr) {
+      console.error('[Blockchain] Anchor failed:', blockchainErr.message);
+    }
 
     res.status(201).json({
       telemetry_id,
@@ -61,6 +64,28 @@ exports.getTelemetry = async (req, res, next) => {
       .eq('pond_id', pondId)
       .order('timestamp', { ascending: false })
       .limit(limit);
+
+    if (error) throw error;
+    res.json(data);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/telemetry/
+ * Ambil 5 riwayat data sensor kolam, terbaru duluan.
+ */
+exports.getTelemetryLastFive = async (req, res, next) => {
+  try {
+    const { pondId } = req.params;
+
+    const { data, error } = await supabase
+      .from('telemetry')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(5);
 
     if (error) throw error;
     res.json(data);

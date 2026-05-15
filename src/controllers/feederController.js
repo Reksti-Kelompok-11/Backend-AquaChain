@@ -23,6 +23,25 @@ exports.getSchedules = async (req, res, next) => {
 };
 
 /**
+ * GET /api/feeder/:pondId/schedules
+ * Ambil jadwal pakan aktif untuk kolam tertentu.
+ */
+exports.getAllSchedules = async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('feeding_schedules')
+      .select('*')
+      .order('time', { ascending: true });
+
+    if (error) throw error;
+    res.json(data);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
  * POST /api/feeder/schedules
  * Buat jadwal pakan baru.
  */

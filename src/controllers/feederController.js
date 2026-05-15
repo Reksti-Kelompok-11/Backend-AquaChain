@@ -11,7 +11,6 @@ exports.getSchedules = async (req, res, next) => {
       .from('feeding_schedules')
       .select('*')
       .eq('pond_id', req.params.pondId)
-      .eq('is_active', true)
       .order('time', { ascending: true });
 
     if (error) throw error;
@@ -23,8 +22,8 @@ exports.getSchedules = async (req, res, next) => {
 };
 
 /**
- * GET /api/feeder/:pondId/schedules
- * Ambil jadwal pakan aktif untuk kolam tertentu.
+ * GET /api/feeder/schedules
+ * Ambil semua jadwal pakan.
  */
 exports.getAllSchedules = async (req, res, next) => {
   try {

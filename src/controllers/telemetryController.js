@@ -29,7 +29,9 @@ exports.receiveTelemetry = async (req, res, next) => {
       turbidity,
       timestamp: new Date().toISOString(),
     });
-    if (error) throw error;    // try {
+    if (error) throw error;    
+    
+    // try {
     //   await anchorToBlockchain({ telemetry_id, pond_id, ph, temperature, turbidity });
     // } catch (blockchainErr) {
     //   console.error('[Blockchain] Anchor failed:', blockchainErr.message);

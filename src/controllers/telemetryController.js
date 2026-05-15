@@ -175,3 +175,35 @@ exports.getFHIHistory = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * GET /api/telemetry/alerts
+ * Ambil 7 alert terakhir di pond.
+ */
+exports.getAlertsHistory = async (req, res, next) => {
+  try {
+    const { pondId } = req.params;
+
+    const { data, error } = await supabase
+      .from('telemetry')
+      .select('ph, temperature, turbidity, timestamp')
+      .eq('pond_id', pondId)
+      .order('timestamp', { ascending: false })
+      .limit(7);
+
+    if (error) throw error;
+
+    const alerts = data.flatMap((d, index) =>
+      calculateAlerts({ ph: d.ph, temperature: d.temperature, turbidity: d.turbidity })
+        .map(a => ({
+          tanggal: d.timestamp,
+          parameter: a.message,
+          status: index === 0 ? "auto" : "resolved"
+        }))
+    );
+
+    res.json(alerts);
+  } catch (err) {
+    next(err);
+  }
+};
